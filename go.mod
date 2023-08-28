@@ -3,6 +3,7 @@ module github.com/ecodeclub/grpc-local-client
 go 1.20
 
 require (
+	github.com/golang/protobuf v1.5.3
 	github.com/stretchr/testify v1.8.4
 	google.golang.org/protobuf v1.31.0
 )
