@@ -74,7 +74,7 @@ func (g *Generator) generateNewFunc(svc *protogen.Service) {
 	g.write(typeName)
 	g.write("(server " + svc.GoName + "Server) " + svc.GoName + "Client")
 	g.p(" {")
-	g.p("	return &" + g.toLowerCamelCase(typeName): + "{")
+	g.p("	return &" + g.toLowerCamelCase(typeName) + "{")
 	g.p("		server: server,")
 	g.p("	}")
 	g.p("}")
