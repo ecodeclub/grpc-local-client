@@ -2,13 +2,14 @@ package genclient
 
 import (
 	"fmt"
+	"strings"
 
 	"google.golang.org/protobuf/compiler/protogen"
 )
 
 const (
 	name    = "protoc-gen-go-grpc-local-client"
-	version = "v0.0.1"
+	version = "v0.0.2"
 )
 
 type Generator struct {
@@ -71,16 +72,16 @@ func (g *Generator) generateNewFunc(svc *protogen.Service) {
 	typeName := g.typeName(svc)
 	g.write("func New")
 	g.write(typeName)
-	g.write("(server " + svc.GoName + "Server) *" + typeName)
+	g.write("(server " + svc.GoName + "Server) " + svc.GoName + "Client")
 	g.p(" {")
-	g.p("	return &" + g.typeName(svc) + "{")
+	g.p("	return &" + g.toLowerCamelCase(typeName): + "{")
 	g.p("		server: server,")
 	g.p("	}")
 	g.p("}")
 }
 
 func (g *Generator) genDefinition(svc *protogen.Service) {
-	typeName := g.typeName(svc)
+	typeName := g.toLowerCamelCase(g.typeName(svc))
 	g.p(fmt.Sprintf("var _ %sClient=(*%s)(nil)", svc.GoName, typeName))
 	g.write("type ")
 	g.write(typeName)
@@ -109,7 +110,7 @@ func (g *Generator) p(str string) {
 
 func (g *Generator) generateMethod(svc *protogen.Service, m *protogen.Method) {
 	g.write("func (s *")
-	g.write(g.typeName(svc))
+	g.write(g.toLowerCamelCase(g.typeName(svc)))
 	g.write(") ")
 	g.write(m.GoName)
 	ctx := g.genFile.QualifiedGoIdent(protogen.GoIdent{
@@ -132,4 +133,11 @@ func (g *Generator) generateMethod(svc *protogen.Service, m *protogen.Method) {
 	g.write(m.GoName)
 	g.p("(ctx, req)")
 	g.p("}")
+}
+
+func (g *Generator) toLowerCamelCase(input string) string {
+	if len(input) < 2 {
+		return strings.ToLower(input)
+	}
+	return strings.ToLower(string(input[0])) + input[1:]
 }
